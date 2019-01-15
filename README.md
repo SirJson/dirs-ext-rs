@@ -1,10 +1,3 @@
-[![crates.io](https://img.shields.io/crates/v/dirs.svg)](https://crates.io/crates/dirs)
-[![API documentation](https://docs.rs/dirs/badge.svg)](https://docs.rs/dirs/)
-![actively developed](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
-[![TravisCI status](https://img.shields.io/travis/soc/dirs-rs/master.svg?label=Linux/macOS%20build)](https://travis-ci.org/soc/dirs-rs)
-[![AppVeyor status](https://img.shields.io/appveyor/ci/soc/dirs-rs/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/soc/dirs-rs/branch/master)
-![License: MIT/Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-orange.svg)
-
 # `dirs`
 
 ## Introduction
@@ -36,7 +29,7 @@ and on the JVM ([directories-jvm](https://github.com/soc/directories-jvm)).
 Add the library as a dependency to your project by inserting
 
 ```toml
-dirs = "1.0"
+dirs-ext = {git = "https://github.com/SirJson/dirs-ext-rs.git"}
 ```
 
 into the `[dependencies]` section of your Cargo.toml file.
@@ -69,7 +62,20 @@ dirs::executable_dir();
 // Mac: None
 ```
 
-## Design Goals
+#### And in this version she can also query her applications folder
+
+```rust
+extern crate dirs;
+
+dirs::application_dir();
+// Lin: Some(/usr/bin)
+// Win: Some(C:\Program Files)
+// Mac: Some(/Applications)
+```
+
+---
+
+## Original Design Goals
 
 - The _dirs_ library is a low-level crate designed to provide the paths to standard directories
   as defined by operating systems rules or conventions. If your requirements are more complex,
@@ -128,7 +134,8 @@ Please take this table with a grain of salt: a different crate might very well b
 | --------------------------------------------------------- | -------------- |:---:|:---:|:---:|:--:|:--:|:--:|:--:|
 | [app_dirs](https://crates.io/crates/app_dirs)             | Unmaintained   |  ✔  |  ✔  |  ✔  | 🞈  | ✖  | ✔  | ✖  |
 | [app_dirs2](https://crates.io/crates/app_dirs2)           | Maintained     |  ✔  |  ✔  |  ✔  | 🞈  | ✖  | ✔  | ✖  |
-| **dirs**                                                  | **Developed**  |  ✔  |  ✔  |  ✔  | ✔  | ✔  | ✖  | ✔  |
+| **dirs** *The upstream library*                           | **Developed**  |  ✔  |  ✔  |  ✔  | ✔  | ✔  | ✖  | ✔  |
+| **dirs-ext**                                 | **Only extendeded as needed**  |  ✔  |  ✔  |  ✔  | ✔  | ✔  | ✖  | ✔  |
 | [directories](https://crates.io/crates/directories)       | Developed      |  ✔  |  ✔  |  ✔  | ✔  | ✔  | ✔  | ✔  |
 | [s_app_dir](https://crates.io/crates/s_app_dir)           | Unmaintained?  |  ✔  |  ✖  |  🞈  | ✖  | ✖  | 🞈  | ✖  |
 | [standard_paths](https://crates.io/crates/standard_paths) | Maintained     |  ✔  |  ✖  |  ✔  | ✔  | ✔  | ✔  | ✖  |
