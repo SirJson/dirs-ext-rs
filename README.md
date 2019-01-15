@@ -2,6 +2,9 @@
 
 ## Introduction
 
+- an extension of `dirs` that
+  - integrates the pull request from [Larusso](https://github.com/Larusso)
+  - allows for querying the font folder path on windows
 - a tiny low-level library with a minimal API
 - that provides the platform-specific, user-accessible locations
 - for retrieving and storing configuration, cache and other data
@@ -18,9 +21,6 @@ The library provides the location of these directories by leveraging the mechani
 
 This library is written in Rust, and supports Linux, Redox, macOS and Windows.
 Other platforms are also supported; they use the Linux conventions.
-
-It's mid-level sister library, _directories_, is available for Rust ([directories-rs](https://github.com/soc/directories-rs))
-and on the JVM ([directories-jvm](https://github.com/soc/directories-jvm)).
 
 ## Usage
 
@@ -39,38 +39,44 @@ into the `[dependencies]` section of your Cargo.toml file.
 Library run by user Alice:
 
 ```rust
-extern crate dirs;
+extern crate dirs_ext;
 
-dirs::home_dir();
+dirs_ext::home_dir();
 // Lin: Some(/home/alice)
 // Win: Some(C:\Users\Alice)
 // Mac: Some(/Users/Alice)
 
-dirs::audio_dir();
+dirs_ext::audio_dir();
 // Lin: Some(/home/alice/Music)
 // Win: Some(C:\Users\Alice\Music)
 // Mac: Some(/Users/Alice/Music)
 
-dirs::config_dir();
+dirs_ext::config_dir();
 // Lin: Some(/home/alice/.config)
 // Win: Some(C:\Users\Alice\AppData\Roaming)
 // Mac: Some(/Users/Alice/Library/Preferences)
 
-dirs::executable_dir();
+dirs_ext::executable_dir();
 // Lin: Some(/home/alice/.local/bin)
 // Win: None
 // Mac: None
 ```
 
-#### And in this version she can also query her applications folder
+#### And in this version she can also query her applications and her pictures folder
 
 ```rust
-extern crate dirs;
+extern crate dirs_ext;
 
-dirs::application_dir();
+dirs_ext::application_dir();
 // Lin: Some(/usr/bin)
 // Win: Some(C:\Program Files)
 // Mac: Some(/Applications)
+
+dirs_ext::font_dir();
+//
+// Lin: Some(/home/alice/.local/fonts)
+// Win: Some(C:\Windows\Fonts)
+// Mac: Some(/Users/Alice/Library/Fonts)
 ```
 
 ---
@@ -78,9 +84,7 @@ dirs::application_dir();
 ## Original Design Goals
 
 - The _dirs_ library is a low-level crate designed to provide the paths to standard directories
-  as defined by operating systems rules or conventions. If your requirements are more complex,
-  e. g. computing cache, config, etc. paths for specific applications or projects, consider using
-  [directories](https://github.com/soc/directories-rs) instead.
+  as defined by operating systems rules or conventions.
 - This library does not create directories or check for their existence. The library only provides
   information on what the path to a certain directory _should_ be. How this information is used is
   a decision that developers need to make based on the requirements of each individual application.
@@ -88,6 +92,8 @@ dirs::application_dir();
   There is no discernible benefit in returning a path that points to a user-level, writable
   directory on one operating system, but a system-level, read-only directory on another, that would
   outweigh the confusion and unexpected failures such an approach would cause.
+  - `executable_dir` is specified to provide the path to a user-writable directory for binaries.<br/>
+    As such a directory only commonly exists on Linux, it returns `None` on macOS and Windows.
   - `executable_dir` is specified to provide the path to a user-writable directory for binaries.<br/>
     As such a directory only commonly exists on Linux, it returns `None` on macOS and Windows.
   - `font_dir` is specified to provide the path to a user-writable directory for fonts.<br/>
@@ -100,8 +106,6 @@ dirs::application_dir();
 
 ## Features
 
-**If you want to compute the location of cache, config or data directories for your own application or project,
-use `ProjectDirs` of the [directories](https://github.com/soc/directories-rs) project instead.**
 
 | Function name    | Value on Linux/Redox                                                                             | Value on Windows                  | Value on macOS                              |
 | ---------------- | ------------------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------------------- |
@@ -128,7 +132,6 @@ There are other crates in the Rust ecosystem that try similar or related things.
 Here is an overview of them, combined with ratings on properties that guided the design of this crate.
 
 Please take this table with a grain of salt: a different crate might very well be more suitable for your specific use case.
-(Of course _my_ crate achieves _my_ design goals better than other crates, which might have had different design goals.)
 
 | Library                                                   | Status         | Lin | Mac | Win |Base|User|Proj|Conv|
 | --------------------------------------------------------- | -------------- |:---:|:---:|:---:|:--:|:--:|:--:|:--:|
