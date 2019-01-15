@@ -1,4 +1,4 @@
-# `dirs`
+# `dirs-ext`
 
 ## Introduction
 
